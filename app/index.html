@@ -41,16 +41,34 @@
     </div>
 </nav>
 
-<script src="js/main.js"></script>
-
 <script type="text/x-handlebars-template" id="playerItemTemplate">
-    <ul class="list-group" id="audioList">
+    <ul class="list-group" id="friendList">
         {{#each list}}
         <li class="list-group-item">
             <div class="row">
                 <div class="col-xs-10">
-                    <span class="glyphicon glyphicon-play" data-role="playback" data-src="{{url}}"></span>
-                    <span class="title">{{./artist}} - {{./title}}</span>
+                   <img src="{{photo_50}}" alt="" class="friend-photo">
+                    <span class="title">{{./first_name}} - {{./last_name}}</span>
+                </div>
+                <div class="col-xs-2 text-right">{{formatTime duration}}</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-danger" data-role="progressbar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {{/each}}
+    </ul>
+    <ul class="list-group" id="friendListChosen">
+        {{#each list}}
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col-xs-10">
+                   <img src="{{photo_50}}" alt="" class="friend-photo">
+                    <span class="title">{{./first_name}} - {{./last_name}}</span>
                 </div>
                 <div class="col-xs-2 text-right">{{formatTime duration}}</div>
             </div>
@@ -65,5 +83,9 @@
         {{/each}}
     </ul>
 </script>
+
+<script src="js/drag.js"></script>
+<script src="js/main.js"></script>
+
 </body>
 </html>

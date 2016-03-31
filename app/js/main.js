@@ -19,6 +19,7 @@ new Promise(function(resolve) {
     }
 })
     .then(function() {
+   console.log(document.getElementById("friendList"));
         return new Promise(function(resolve, reject) {
             VK.init({
                 apiId: 5382134
@@ -88,8 +89,8 @@ new Promise(function(resolve) {
         mainPlaybackButton.addEventListener('click', function() {
             if (playingItem) {
                 playingItem.querySelector('[data-role=playback]').dispatchEvent(new CustomEvent('click'));
-            } else if (audioList) {
-                var firstItem = audioList.querySelector('li');
+            } else if (friendList) {
+                var firstItem = friendList.querySelector('li');
 
                 if (firstItem) {
                     firstItem.querySelector('[data-role=playback]').dispatchEvent(new CustomEvent('click'));
@@ -158,17 +159,20 @@ new Promise(function(resolve) {
         }, true);
 
         return new Promise(function(resolve, reject) {
-            VK.api('audio.get', {}, function(response) {
+            VK.api('friends.get', {fields:["photo_50"]}, function(response) {
                 if (response.error) {
                     reject(new Error(response.error.error_msg));
                 } else {
-
+                    
+                    console.log(response.response);
+                    
                     var source = playerItemTemplate.innerHTML,
                         templateFn = Handlebars.compile(source),
                         template = templateFn({list: response.response});
 
                     results.innerHTML = template;
 
+                    Drag().subscribe();
                     resolve();
                 }
             });
