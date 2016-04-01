@@ -8,35 +8,62 @@ var Drag = function() {
     
     function setupListeners(){
         var dragList = document.getElementById("friendList");
+        var friendsFilter = document.getElementById("friendListChosen");
         
+        if (!localStorage["friendListChosen"]){
+            console.log("init ls");
+            localStorage["friendListChosen"] = "\"\"";
+        }
+        var storage_uid = JSON.parse(localStorage["friendListChosen"]).split(" ").filter(function(item, index, array){
+            return item !== "";
+        });
+        console.log('storage_uid:', storage_uid);
+
+        document.onmousemove = function(e) {
+            
+            if (isDragging){
+                moveDragEl(e);
+            }
+        }
         dragList.ondragstart = function(){
-            return false;
+            //return false;
         }
 
         dragList.onmousedown = function(e) { 
+            e.preventDefault();
             
             var dragEl = findParent(e.target, "li");
 
-            console.log(dragEl);
             dragClone = dragEl.cloneNode(true);
-            dragClone.style.opacity = 0.5;
+            dragClone.style.opacity = 0.8;
             dragClone.style.position = "absolute";
             dragClone.style.zIndex = 1000;
-            
-            console.log(dragClone);
 
             var location = getLocation(dragEl);
-            console.log(location);
             offsetX = e.pageX - location.left;
             offsetY = e.pageY - location.top;
             
             dragClone.onmouseup = function(e){
-        if (!isDragging) return;
-        
-                console.log("up");
+                if (!isDragging) return;
+                
+                var dragInsert = dragEl.cloneNode(true);
+                friendsFilter.appendChild(dragInsert);
+                dragList.removeChild(dragEl);
+                
+                var uid = dragInsert.getAttribute("data-uid");
+                
+                if (storage_uid.indexOf(uid) === -1){
+                    storage_uid.push(uid);
+                }
+                
+                localStorage["friendListChosen"] = JSON.stringify(storage_uid.join(" "));
+                
+                console.log(localStorage);
 
-                //dragEl.style.left = dragClone.style.left;
-                //dragEl.style.top = dragClone.style.top;
+//                dragEl.style.position = "absolute";
+//                dragEl.style.zIndex = 1000;
+//                dragEl.style.left = dragClone.style.left;
+//                dragEl.style.top = dragClone.style.top;
 
                 body.removeChild(dragClone);
                 isDragging = false;
@@ -80,17 +107,9 @@ var Drag = function() {
     }
 
     function moveDragEl(e) {
-        console.log(e.pageX, e.pageY);
         dragClone.style.left = e.pageX - offsetX + 'px';
         dragClone.style.top = e.pageY - offsetY + 'px';
       }
-
-    document.onmousemove = function(e) {
-        if (isDragging){
-            moveDragEl(e);
-        }
-    }
-    
 
     function getLocation(elem) {
       var box = elem.getBoundingClientRect();

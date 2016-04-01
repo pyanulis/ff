@@ -48,116 +48,6 @@ new Promise(function(resolve) {
         })
     })
     .then(function() {
-        function onProgress(e) {
-            var progressBar = playingItem.querySelector('[data-role=progressbar]'),
-                duration = e.target.duration,
-                currentTime = e.target.currentTime,
-                progress = parseInt(100 / duration * currentTime);
-
-            progressBar.style.width = progress + '%';
-        }
-
-        function onPlay() {
-            playingItem.querySelector('[data-role=playback]').className = 'glyphicon glyphicon-pause';
-            mainPlaybackButton.querySelector('[data-role=playback]').className = 'glyphicon glyphicon-pause';
-        }
-
-        function onPause() {
-            playingItem.querySelector('[data-role=playback]').className = 'glyphicon glyphicon-play';
-            mainPlaybackButton.querySelector('[data-role=playback]').className = 'glyphicon glyphicon-play';
-        }
-
-        function toSong(to) {
-            if (playingItem) {
-                var nextPlayer = to === 'next' ? playingItem.nextElementSibling : playingItem.previousElementSibling;
-
-                if (nextPlayer) {
-                    nextPlayer.querySelector('[data-role=playback]').dispatchEvent(new CustomEvent('click'));
-                }
-            }
-        }
-
-        function onEnd() {
-            toSong('next');
-        }
-
-
-        prevSongButton.addEventListener('click', function() {
-            toSong('prev')
-        });
-
-        mainPlaybackButton.addEventListener('click', function() {
-            if (playingItem) {
-                playingItem.querySelector('[data-role=playback]').dispatchEvent(new CustomEvent('click'));
-            } else if (friendList) {
-                var firstItem = friendList.querySelector('li');
-
-                if (firstItem) {
-                    firstItem.querySelector('[data-role=playback]').dispatchEvent(new CustomEvent('click'));
-                }
-            }
-        });
-
-        nextSongButton.addEventListener('click', function() {
-            toSong('next');
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.target.tagName !== 'INPUT') {
-                switch (e.keyCode) {
-                    case 32:
-                    {
-                        e.preventDefault();
-                        mainPlaybackButton.dispatchEvent(new CustomEvent('click'));
-
-                        break;
-                    }
-                    case 37:
-                    {
-                        e.preventDefault();
-                        prevSongButton.dispatchEvent(new CustomEvent('click'));
-
-                        break;
-                    }
-                    case 39:
-                    {
-                        e.preventDefault();
-                        nextSongButton.dispatchEvent(new CustomEvent('click'));
-
-                        break;
-                    }
-                }
-            }
-        }, true);
-
-        globalPlayer.addEventListener('play', onPlay);
-        globalPlayer.addEventListener('pause', onPause);
-        globalPlayer.addEventListener('timeupdate', onProgress);
-        globalPlayer.addEventListener('ended', onEnd);
-
-        results.addEventListener('click', function(e) {
-            if (e.target.getAttribute('data-role') === 'playback') {
-                var currentItem = e.target.parentNode.parentNode.parentNode;
-
-                if (currentItem === playingItem) {
-                    if (globalPlayer.paused) {
-                        globalPlayer.play();
-                    } else {
-                        globalPlayer.pause();
-                    }
-                } else {
-                    if (!globalPlayer.paused) {
-                        onPause();
-                    }
-
-                    playingItem = currentItem;
-
-                    globalPlayer.src = e.target.getAttribute('data-src');
-                    globalPlayer.play();
-                }
-            }
-        }, true);
-
         return new Promise(function(resolve, reject) {
             VK.api('friends.get', {fields:["photo_50"]}, function(response) {
                 if (response.error) {
@@ -166,7 +56,7 @@ new Promise(function(resolve) {
                     
                     console.log(response.response);
                     
-                    var source = playerItemTemplate.innerHTML,
+                    var source = friendListTemplate.innerHTML,
                         templateFn = Handlebars.compile(source),
                         template = templateFn({list: response.response});
 
