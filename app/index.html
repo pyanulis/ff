@@ -29,20 +29,20 @@
 </div>
     
 <script type="text/x-handlebars-template" id="friendListTemplate">
-    <section class="section-content">
+    <section class="section-content" id="mainContent">
         <ul class="list-group" id="friendList">
             {{#each list}}
-            <li class="list-group-item" data-uid="{{./user_id}}">
-                <div class="row">
-                    <div class="col-xs-10">
-                       <img src="{{photo_50}}" alt="" class="friend-photo">
-                        <span class="title">{{./first_name}} - {{./last_name}}</span>
+            <li class="list-group-item" data-uid="{{./user_id}}" draggable="true">
+                <div class="row" draggable="false">
+                    <div class="col-xs-10" draggable="false">
+                       <img src="{{photo_50}}" alt="" class="friend-photo" draggable="false">
+                        <span class="title" draggable="false">{{./first_name}} - {{./last_name}}</span>
                     </div>
                 </div>
             </li>
             {{/each}}
         </ul>
-        <ul class="list-group-chosen" id="friendListChosen">
+        <ul class="list-group list-group-chosen" id="friendListChosen">
 
         </ul>
     </section>
@@ -50,7 +50,7 @@
 </script>
 
 
-<script src="js/drag.js"></script>
+<script src="js/drag5.js"></script>
 <script src="js/main.js"></script>
 
 </body>

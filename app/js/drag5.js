@@ -5,15 +5,14 @@ var Drag = function() {
     var dragClone;
 
     var offsetX, offsetY;
+        
+    var isOverMainList,
+        isOverFilter;
     
     function setupListeners(){
         var mainSection = document.getElementById("mainContent");
-        var dragList = document.getElementById("friendList");
+        var mainFriendsList = document.getElementById("friendList");
         var friendsFilter = document.getElementById("friendListChosen");
-        
-        var isOverMainList,
-            isOverMainContent,
-            isOverFilter;
         
         if (!localStorage["friendListChosen"]){
             console.log("init ls");
@@ -23,86 +22,49 @@ var Drag = function() {
             return item !== "";
         });
         console.log('storage_uid:', storage_uid);
-
-        document.onmousemove = function(e) {
-            console.log(e.target.tagName);
-            if (isDragging){
-                moveDragEl(e);
-            }
-        }
-        dragList.ondragstart = function(){
-            //return false;
-            console.log("dragList drag start");
-        }
         
-        mainSection.ondragover = function(){
-            console.log("main drag over");
-        }
+        mainFriendsList.addEventListener("dragstart", function(e){
+            listDragStart(getIsOverFilterList, e.srcElement, friendsFilter);
+        });
         
-        mainSection.ondrag = function(){
-            console.log("main drag");
-        }
+        friendsFilter.addEventListener("dragstart", function(e){
+            listDragStart(getIsOverMainList, e.srcElement, mainFriendsList);
+        });
         
-        friendsFilter.onmouseout = function(e){
-            console.log("no");
+        document.addEventListener("dragover", function(e){
+            isOverMainList = false;
             isOverFilter = false;
-        }
+        }, true);
         
-        friendsFilter.onmouseover = function(){
-            console.log("obj");
-            isOverFilter = true;
-        }
-
-        dragList.onmousedown = function(e) { 
+        mainFriendsList.addEventListener("dragover", function(e){
             e.preventDefault();
-            
-            var dragEl = findParent(e.target, "li");
-
-            dragClone = dragEl.cloneNode(true);
-            dragClone.style.opacity = 0.8;
-            dragClone.style.position = "absolute";
-            dragClone.style.zIndex = 1000;
-
-            var location = getLocation(dragEl);
-            offsetX = e.pageX - location.left;
-            offsetY = e.pageY - location.top;
-            
-            dragClone.onmousemove = function(e){
-                console.log(e.target.tagName);
-                e.preventDefault();
-            }
-            dragClone.onmouseup = function(e){
-                console.log('isOverFilter:', isOverFilter);
-                if (!isDragging) return;
-                
-                if (!isOverFilter){
-                    body.removeChild(dragClone);
-                    isDragging = false;
-                    return;
-                }
-                
-                var dragInsert = dragEl.cloneNode(true);
-                friendsFilter.appendChild(dragInsert);
-                dragList.removeChild(dragEl);
-                
-                var uid = dragInsert.getAttribute("data-uid");
-                
-                if (storage_uid.indexOf(uid) === -1){
-                    storage_uid.push(uid);
-                }
-                
-                localStorage["friendListChosen"] = JSON.stringify(storage_uid.join(" "));
-                
-                console.log(localStorage);
-
-                body.removeChild(dragClone);
-                isDragging = false;
-            }
-            
-            body.appendChild(dragClone);
-            isDragging = true;
-        }
+            isOverMainList = true;
+        }, true);
+        
+        friendsFilter.addEventListener("dragover", function(e){
+            e.preventDefault();
+            isOverFilter = true;
+        }, true);
     };
+    
+    function listDragStart(listOverDelegate, dragElement, listELement){
+        dragElement.ondragend = function(){
+                if (listOverDelegate()){
+                    listELement.appendChild(dragElement);
+                    dragElement.ondragend = null;
+                }
+            };
+    }
+    
+    function getIsOverFilterList(){
+        console.log('isOverFilter:', isOverFilter);
+        return isOverFilter;
+    }
+    
+    function getIsOverMainList(){
+        console.log('isOverMainList:', isOverMainList);
+        return isOverMainList;
+    }
     
     function findParent(sourceEl, parentTag){
         

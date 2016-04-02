@@ -40,7 +40,7 @@ new Promise(function(resolve) {
                 if (response.error) {
                     reject(new Error(response.error.error_msg));
                 } else {
-                    headerInfo.textContent = 'Музыка на странице ' + response.response[0].first_name + ' ' + response.response[0].last_name;
+                    headerInfo.textContent = 'Друзья ' + response.response[0].first_name + ' ' + response.response[0].last_name;
 
                     resolve();
                 }
