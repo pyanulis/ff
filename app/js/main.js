@@ -1,15 +1,4 @@
-Handlebars.registerHelper('formatTime', function(time) {
-    var minutes = parseInt(time / 60),
-        seconds = time - minutes * 60;
-
-    minutes = minutes.toString().length === 1 ? '0' + minutes : minutes;
-    seconds = seconds.toString().length === 1 ? '0' + seconds : seconds;
-
-    return minutes + ':' + seconds;
-});
-
-var globalPlayer = document.createElement('audio'),
-    playingItem;
+var currentResult;
 
 new Promise(function(resolve) {
     if (document.readyState === 'complete') {
@@ -40,34 +29,102 @@ new Promise(function(resolve) {
                 if (response.error) {
                     reject(new Error(response.error.error_msg));
                 } else {
-                    headerInfo.textContent = 'Друзья ' + response.response[0].first_name + ' ' + response.response[0].last_name;
-
                     resolve();
                 }
             });
         })
     })
     .then(function() {
-        return new Promise(function(resolve, reject) {
+        var p = new Promise(function(resolve, reject) {
             VK.api('friends.get', {fields:["photo_50"]}, function(response) {
                 if (response.error) {
                     reject(new Error(response.error.error_msg));
                 } else {
                     
-                    console.log(response.response);
+                    Storage.init(modelUpdatedHandler);
+                    Storage.load(response.response);
                     
-                    var source = friendListTemplate.innerHTML,
-                        templateFn = Handlebars.compile(source),
-                        template = templateFn({list: response.response});
-
-                    results.innerHTML = template;
-
-                    Drag().subscribe();
                     resolve();
                 }
             });
         });
-    }).catch(function(e) {
-    alert('Ошибка: ' + e.message);
+    
+        p.catch(function(e) {
+            alert('Ошибка: ' + e.message);
+        });
+    
+        return p;
+    })
+    .then(function(){
+        mainList.addEventListener("click", addOrDelete);
+        filterList.addEventListener("click", addOrDelete);
+
+        filterMain.addEventListener("input", function(e){
+            Storage.filterMain(filterMain.value);
+        });
+
+        filterLocal.addEventListener("input", function(e){
+            Storage.filterLocal(filterLocal.value);
+        });
+
+        btnSave.addEventListener("click", Storage.save);
+
+        Drag.subscribe();
 });
+
+function modelUpdatedHandler(result){
+    currentResult = result;
+    
+    fillIn(currentResult);
+}
+
+function fillIn(result){
+    var source = friendListTemplate.innerHTML,
+    templateFn = Handlebars.compile(source),
+    template = templateFn({listMain: result.main});
+
+    resultMain.innerHTML = template;
+    
+    source = friendListLocalTemplate.innerHTML;
+    templateFn = Handlebars.compile(source);
+    template = templateFn({listLocal: result.local});
+
+    resultLocal.innerHTML = template;
+}
+
+function addOrDelete(e){
+    e.preventDefault();
+    
+    var attrActionName = "data-action";
+    if (!e.target.hasAttribute(attrActionName)) return;
+    
+    var li = findParent(e.target, "li")
+    var action = e.target.getAttribute(attrActionName),
+        uid = li.getAttribute("data-uid");
+    
+    if (action === "add"){
+        Storage.addLocal(uid);
+    }else if(action === "delete"){
+        Storage.addMain(uid);
+    }
+}
+    
+function findParent(sourceEl, parentTag){
+
+    if (sourceEl.tagName === parentTag) return sourceEl;
+
+    var tagName = "";
+    var parentNode = sourceEl;
+    while (tagName.toLowerCase() !== parentTag.toLowerCase() && tagName.toLowerCase() !== "body"){
+
+        parentNode = parentNode.parentNode;
+        tagName = parentNode.tagName;
+    }
+
+    if (tagName.toLowerCase() === "body"){
+        throw "Didn't find " + parentTag + ". Reached document root.";
+    }
+
+    return parentNode;
+}
 

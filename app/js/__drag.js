@@ -15,14 +15,7 @@ var Drag = function() {
             isOverMainContent,
             isOverFilter;
         
-        if (!localStorage["friendListChosen"]){
-            console.log("init ls");
-            localStorage["friendListChosen"] = "\"\"";
-        }
-        var storage_uid = JSON.parse(localStorage["friendListChosen"]).split(" ").filter(function(item, index, array){
-            return item !== "";
-        });
-        console.log('storage_uid:', storage_uid);
+        
 
         document.onmousemove = function(e) {
             console.log(e.target.tagName);
