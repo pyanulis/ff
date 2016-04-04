@@ -68,8 +68,6 @@ new Promise(function(resolve) {
         });
 
         btnSave.addEventListener("click", Storage.save);
-
-        Drag.subscribe();
 });
 
 function modelUpdatedHandler(result){
@@ -90,6 +88,8 @@ function fillIn(result){
     template = templateFn({listLocal: result.local});
 
     resultLocal.innerHTML = template;
+
+    Drag.subscribe();
 }
 
 function addOrDelete(e){
