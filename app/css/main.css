@@ -11,8 +11,12 @@
     width: 300px;
     height: 400px;
     overflow: auto;
-    background-color: #e0e0e0;
-    margin-bottom: 0;
+    margin: 0;
+    margin-left: 15px;
+}
+
+#resultLocal .list-group{
+    margin-right: 15px;
 }
 
 .header {
@@ -34,7 +38,7 @@
     font-family: "fira_sansmedium";
     font-size: 12px;
     color: #4f4f4f;
-    cursor: grab;
+    border-top: 2px solid #f0f0f0;
 }
 
 .list-group-item:hover{
@@ -55,6 +59,7 @@
     height: 30px;
     float: right;
     margin-top: 10px;
+    margin-right: 5px;
 }
 
 .container {
@@ -82,21 +87,24 @@
 }
 
 .input-filter {
+    box-sizing: border-box;
     border-radius: 11px;
     border: 0px;
     border-color: #fff;
-    margin: 5px 10px;
+    margin: 15px 10px;
     padding: 6px 10px;
     font-family: "fira_sanslight";
     font-size: 12px;
-    width: 285px;
+    width: 95%;
     height: 25px;
+    color: #acacac;
 }
 
 .article-main {
     border-radius: 9px;
     background-color: #f0f0f0;
     margin-top: 15px;
+    height: 580px;
 }
 
 .mybody {
@@ -113,4 +121,17 @@
 }
 .section-list {
     overflow: hidden;
+}
+
+.list-title {
+    font-family: "fira_sansmedium";
+    font-size: 12px;
+    color: #4f4f4f;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 10px 15px;
+}
+
+.figure-list {
+    background-color: #fff;
 }

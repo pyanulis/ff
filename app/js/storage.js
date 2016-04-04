@@ -46,6 +46,9 @@ var Storage = (function() {
             model.main = filterList(storage.main, filterMain);
         }
         
+        model.local = model.local.sort(sorterByFullName);
+        model.main = model.main.sort(sorterByFullName);
+        
         modelUpdatedCallback(model);
     }
     
@@ -125,6 +128,15 @@ var Storage = (function() {
         });
 
         localStorage[key] = JSON.stringify(storage_uid.join(" "));
+    }
+    
+    function sorterByFullName(item1, item2){
+        var fn1 = item1.fullname.toLocaleLowerCase(),
+            fn2 = item2.fullname.toLocaleLowerCase();
+        
+        if (fn1 > fn2) return 1;
+        if (fn1 < fn2) return -1;
+        return 0;
     }
     
     return {
