@@ -55,11 +55,25 @@
     color: #fff;
     border-radius: 8px;
     border: 0px;
+    border-bottom: 2px solid #ff5f31;
     width: 87px;
     height: 30px;
     float: right;
     margin-top: 10px;
     margin-right: 5px;
+}
+
+.button:hover{
+    border: 0px;
+}
+
+.button:active{
+    border: 0px;
+    border-top: 2px solid #ff5f31;
+}
+
+.button:focus {
+    outline: 0;
 }
 
 .container {
@@ -98,6 +112,7 @@
     width: 95%;
     height: 25px;
     color: #acacac;
+    outline: 0;
 }
 
 .article-main {
